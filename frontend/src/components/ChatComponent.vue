@@ -18,6 +18,7 @@
 <script>
 /* eslint-disable */
 import io from 'socket.io-client';
+import axios from 'axios';
 import MyMessageComponent from './MyMessageComponent.vue';
 import OtherMessageComponent from './OtherMessageComponent.vue';
 
@@ -36,6 +37,13 @@ export default {
     }
   },
   created() {
+
+    alert('opa')
+    axios.get('http://localhost:3000').then((response) => {      
+      alert(response.data.nome)
+    })
+
+
     // Cria uma nova instância do cliente WebSocket
     this.socket = io('http://localhost:3000');
 
@@ -50,6 +58,8 @@ export default {
     });
 
     this.socket.on("message", (data) => {
+
+      alert('recebida')
 
       const date = new Date(data.datetime); // Multiplica por 1000 para obter milissegundos
       const hours = date.getHours().toString().padStart(2, '0'); // Garante que a hora tenha dois dígitos
