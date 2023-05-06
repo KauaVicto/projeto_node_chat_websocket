@@ -6,7 +6,8 @@
           <div v-bind:class="message.username === this.username ? 'box-message right' : 'box-message left'"
             v-for="message in messages" :key="message.username">
             <MyMessageComponent v-if="message.username === this.username" :text="message.text" :hora="message.time" />
-            <OtherMessageComponent v-if="message.username !== this.username" :text="message.text" :hora="message.time" />
+            <OtherMessageComponent v-if="message.username !== this.username" :text="message.text" :hora="message.time"
+              :username="message.username" />
           </div>
         </div>
       </div>
@@ -18,6 +19,7 @@
 <script>
 /* eslint-disable */
 import io from 'socket.io-client';
+import axios from 'axios';
 import MyMessageComponent from './MyMessageComponent.vue';
 import OtherMessageComponent from './OtherMessageComponent.vue';
 
@@ -36,8 +38,11 @@ export default {
     }
   },
   created() {
+
+    this.getAllMessages();
+
     // Cria uma nova instância do cliente WebSocket
-    this.socket = io('http://localhost:3000');
+    this.socket = io('http://10.4.3.105:3000');
 
     const urlSearch = new URLSearchParams(window.location.search);
     this.username = urlSearch.get("username");
@@ -50,6 +55,7 @@ export default {
     });
 
     this.socket.on("message", (data) => {
+      console.log(this.messages)
 
       const date = new Date(data.datetime); // Multiplica por 1000 para obter milissegundos
       const hours = date.getHours().toString().padStart(2, '0'); // Garante que a hora tenha dois dígitos
@@ -61,11 +67,28 @@ export default {
         text: data.text,
         time: `${hours}:${minutes}`
       })
-      this.$refs.container_messages.scrollTop = this.$refs.container_messages.scrollHeight
     })
 
   },
   methods: {
+    async getAllMessages() {
+      axios.get('http://10.4.3.105:3000/findAllMessages')
+        .then((response) => {
+          response.data.forEach(v => {
+            var date = new Date(v.datetime); // Multiplica por 1000 para obter milissegundos
+            var hours = date.getHours().toString().padStart(2, '0'); // Garante que a hora tenha dois dígitos
+            var minutes = date.getMinutes().toString().padStart(2, '0'); // Garante que os minutos tenham dois dígitos
+            var secondsFormatted = date.getSeconds().toString().padStart(2, '0'); // Garante que os segundos tenham dois dígitos
+
+            this.messages.push({
+              username: v.username,
+              text: v.text,
+              time: `${hours}:${minutes}`
+            })
+          });
+
+        })
+    },
     digitou(e) {
 
       this.socket.emit("message", {

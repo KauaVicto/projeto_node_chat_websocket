@@ -1,8 +1,11 @@
-import { io } from './http.js';
+import { io, app } from './http.js';
 
 const users = [];
 const messages = [];
 
+app.get('/findAllMessages', (req, res) => {
+    return res.send(messages)
+})
 
 io.on("connection", socket => {
 
@@ -36,6 +39,6 @@ io.on("connection", socket => {
 
         io.to('all').emit('message', message)
 
-    })
+    });
 
 });

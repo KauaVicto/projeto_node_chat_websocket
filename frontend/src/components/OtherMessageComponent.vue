@@ -1,7 +1,8 @@
 <template>
     <div class="message">
-        <p class="name-user">{{ text }}</p>
-        <span class="hora">{{ hora }}</span>
+        <div class="username">{{ username }}</div>
+        <div class="text"><br>{{ text }}</div>
+        <div class="hora">{{ hora }}</div>
     </div>
 </template>
   
@@ -12,7 +13,8 @@ export default {
     name: 'MyMessageComponent',
     props: {
         text: String,
-        hora: String
+        hora: String,
+        username: String
     }
 }
 </script>
@@ -24,14 +26,29 @@ export default {
     background-color: rgb(16, 54, 16);
     padding: 10px 15px;
     border-radius: 10px;
-    display: flex;
-    align-items: end;
+    min-width: 10%;
     max-width: 60%;
+    position: relative;
+}
+
+.text {
+    padding-bottom: 10px;
 }
 
 .hora {
     font-size: .7rem;
     margin-left: 10px;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}
+
+.username {
+    font-size: .8rem;
+    color: rgb(201, 201, 201);
+    position: absolute;
+    top: 5px;
+    left: 5px;
 }
 </style>
   
